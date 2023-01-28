@@ -1,79 +1,219 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.* ;
-// for standard JDBC programs
 
-import static java.lang.Integer.parseInt;
-
-public class CSVConsume
-{
-    public static void main(String[] args)
+    import java.sql.*;
+    import java.util.*;
+    public class CSVConsume
     {
-        String jdbcUrl="jdbc:mysql://localhost:3306/sapir";
-        String filePath="C:\\Users\\sint1\\Desktop\\highschool.csv";
-        String username ="root";
-        String password="aq123eds";
-        int batchSize=20;
-        Connection connection= null;
-        try {
-         connection= DriverManager.getConnection(jdbcUrl,username,password);
-         connection.setAutoCommit(false);
-         String sql ="insert into employee(Id,First_name,Last_name,Email,Gender,Ip_address,Height,Age,Has_car,Car_color,Grade,Grade_avg,Identification_card) values(?,?,?,?,?,?,?,?,?,?,?,?,?)";
-         PreparedStatement statement=connection.prepareStatement(sql);
-         BufferedReader lineReader=new BufferedReader(new FileReader(filePath));
-         String lineText=null;
-         int count=0;
-         lineReader.readLine();
-         while ((lineText= lineReader.readLine()) !=null)
-         {
-             String [] data= lineText.split(",");
-             String id=data[0];
-             String First_name=data[1];
-             String Last_name=data[2];
-             String Email=data[3];
-             String  Gender=data[4];
-             String Ip_address=data[5];
-             String Height=data[6];
-             String Age=data[7];
-             String Has_car=data[8];
-             String Car_color =data[9];
-             String Grade =data[10];
-             String Grade_avg =data[11];
-             String Identification_card =data[12];
-
-             statement.setInt(1,parseInt(id));
-             statement.setString(1,First_name);
-             statement.setString(1,Last_name);
-             statement.setString(1,Email);
-             statement.setString(1,Gender);
-             statement.setString(1,Ip_address);
-             statement.setInt(1,parseInt(Height));
-             statement.setInt(1,parseInt(Age));
-             statement.setString(1,Has_car);
-             statement.setString(1,Car_color);
-             statement.setInt(1,parseInt(Grade));
-             statement.setFloat(1, (float) Double.parseDouble(Grade_avg));
-             statement.setString(1,Identification_card);
-             statement.addBatch();
-             if (count%batchSize==0)
-             {
-                 statement.executeBatch();
-             }
-
-         }
-lineReader.close();
-         statement.executeBatch();
-         connection.commit();
-         connection.close();
-         System.out.println("sucees");
-        }
-        catch (Exception exception)
+        public static void main(String args[])
         {
-            exception.printStackTrace();
-        }
 
+
+            try {
+                Connection con = DriverManager.getConnection(
+                        "jdbc:mysql://localhost:3306/sapir", "root", "aq123eds");
+                Statement stmt = con.createStatement();
+                //      ResultSet rs=stmt.executeQuery("select * from highschool");
+                //ResultSet rs = stmt.executeQuery("select * from highs4chool");
+                //ResultSet rs=stmt.executeQuery("select * from ids_and_avgs");
+
+
+                //highschool table
+         /*       while (rs.next())1
+                    System.out.println(rs.getInt(1) + "  " + rs.getString(2) + "  " + rs.getString(3)
+                            + " " + rs.getString(4) + "  " + rs.getString(5) + "  " + rs.getString(6) + "  " +
+                            rs.getInt(7) + "  " + rs.getInt(8) + "  " + rs.getString(9) + "  "
+                            + rs.getString(10) + "  " + rs.getInt(11) + " " + rs.getDouble(12) +
+                            " " + rs.getInt(13));
+*/
+              //  highschool_friends table
+                // while(rs1.next())
+                // System.out.println(rs.getInt(1)+"  "+rs.getInt(2) + " " + rs.getInt(3));
+
+                //ids_and_avgs view
+                //  while(rs.next())
+                //    System.out.println(rs.getInt(1)+"  "+rs.getDouble(2));
+                con.close();
+            }
+            catch (Exception e) {
+                System.out.println(e);
+            }
+
+            System.out.println("enter input");
+            Scanner sc = new Scanner(System.in);
+            int x = sc.nextInt();
+
+            while (x!=8)
+            {
+                switch (x)
+                {
+                    case 1:
+
+                        try {
+                            Connection con = DriverManager.getConnection(
+                                    "jdbc:mysql://localhost:3306/sapir", "root", "aq123eds");
+                            Statement stmt = con.createStatement();
+                            ResultSet rs = stmt.executeQuery("select AVG(Grade_avg) from view_avg");
+                            while (rs.next())
+                                System.out.println("the avg of the school is=" + rs.getDouble(1));
+
+                            con.close();
+                        }
+                        catch (Exception e) {
+                            System.out.println(e);
+                        }
+                        break;
+
+
+                    case 2:
+                        try {
+                            Connection con = DriverManager.getConnection(
+                                    "jdbc:mysql://localhost:3306/sapir", "root", "aq123eds");
+                            Statement stmt = con.createStatement();
+
+                            ResultSet rs = stmt.executeQuery("select AVG(Grade_avg) as 'girls avg' from highschool\n" +
+                                    "where gender LIKE 'Female';");
+                            while (rs.next())
+                                System.out.println("the avg of the girls is=" + rs.getDouble(1));
+                            con.close();
+                        }
+                        catch (Exception e) {
+                            System.out.println(e);
+                        }
+                        break;
+
+                    case 3:
+                        try {
+                            Connection con = DriverManager.getConnection(
+                                    "jdbc:mysql://localhost:3306/sapir", "root", "aq123eds");
+                            Statement stmt = con.createStatement();
+                            ResultSet rs = stmt.executeQuery("select AVG(Grade_avg) as 'boys avg' from highschool\n" +
+                                    "where gender LIKE 'Male';");
+                            while (rs.next())
+                                System.out.println("the avg of the boys is=" + rs.getDouble(1));
+                            con.close();
+                        }
+                        catch (Exception e) {
+                            System.out.println(e);
+                        }
+                        break;
+
+                    case 4:  try {
+                        Connection con = DriverManager.getConnection(
+                                "jdbc:mysql://localhost:3306/sapir", "root", "aq123eds");
+                        Statement stmt = con.createStatement();
+                        ResultSet rs = stmt.executeQuery("select AVG(height)  from highschool\n" +
+                                "where Height >= 200 AND Car_color LIKE 'purple';");
+                        while (rs.next())
+                            System.out.println("the avg of height=" + rs.getDouble(1));
+                        con.close();
+                    }
+                    catch (Exception e) {
+                        System.out.println(e);
+                    }
+                        break;
+                    case 5:
+                    {
+                        try {
+                        System.out.println(" ID");
+                        int Id = sc.nextInt();
+                        String friends []= new String[10];
+                        int counter =0;
+
+                        Connection con = DriverManager.getConnection(
+                                "jdbc:mysql://localhost:3306/sapir", "root", "aq123eds");
+                        Statement stmt = con.createStatement();
+
+                        ResultSet rs=stmt.executeQuery("select * from friendships where friend_id = "+Id +" and other_friend_id != 0");
+                        System.out.println("his friends ID:");
+                        while (rs.next()) {
+                            friends[counter++]=rs.getString("other_friend_id");
+                            System.out.println(rs.getInt("other_friend_id"));
+                        }
+                        rs = stmt.executeQuery("select * from friendships where other_friend_id = "+Id+" and friend_id != 0");
+                        while (rs.next()) {
+                            friends[counter++]=rs.getString("friend_id");
+                            System.out.println(rs.getInt("friend_id"));
+                        }
+                        System.out.println("friends of friends ID:");
+                        for(int i=0;i<counter;i++)
+                        {
+                            ResultSet rs1 = stmt.executeQuery("select * from friendships where friend_id = "+friends[i]+" and other_friend_id != 0 and other_friend_id <> "+Id);
+                            while (rs1.next()) {
+                                System.out.println(rs1.getInt("other_friend_id"));
+                            }
+                            ResultSet rs2= stmt.executeQuery("select * from friendships where other_friend_id = "+friends[i]+" and friend_id != 0 and friend_id <> "+Id);
+                            while (rs2.next()) {
+                                System.out.println(rs2.getInt("friend_id"));
+                            }
+                        }
+                        }
+                        catch (Exception e) {
+                            System.out.println(e);
+                        }
+                        break;
+                    }
+                    case 6:
+                        try {
+                            Connection con = DriverManager.getConnection(
+                                    "jdbc:mysql://localhost:3306/sapir", "root", "aq123eds");
+                            Statement stmt = con.createStatement();
+                            ResultSet rs = stmt.executeQuery("WITH friend_counts AS (\n" + "  SELECT \n" + "    Id, \n" + "    (SELECT COUNT(*) FROM friendships WHERE (friend_id = id OR other_friend_id = id) and (id != 0)) as num_friends\n" + "  FROM \n" + "    (SELECT DISTINCT friend_id as idd FROM friendships\n" + "    UNION\n" +
+                                "    SELECT DISTINCT other_friend_id FROM friendships) as id\n" + ")\n"  + "SELECT \n" +
+                                "  number_of_friends, \n" +
+                                "  COUNT(*) as total, \n" +
+                                "  ROUND(COUNT()/(SELECT COUNT() FROM friend_counts)*100, 2) as percentage\n" +
+                                "FROM friend_counts\n" +
+                                "GROUP BY number_of_friends\n" +
+                                "ORDER BY number_of_friends;");
+
+                            double sum1=0;
+                        double sum=0;
+
+                        int counter = 0;
+                        while (rs.next()) {
+                            if(rs.getInt("num_friends")==1)
+                            {
+                                sum1=rs.getDouble("percentage");
+                            }
+                            else
+                            {
+                                if(rs.getInt("num_friends")!=0)
+                                {
+                                    sum += rs.getDouble("percentage");
+                                }
+                            }
+                        }
+                            System.out.println("one friend is: "+sum1);
+                            System.out.println("two and above friends is: "+sum);
+                        System.out.println(" have no friends is: "+(100-sum-sum1));
+                            con.close();
+                    }
+                        catch (Exception e) {
+                        System.out.println(e);
+                    }
+                        break;
+
+                    case 7:
+                        try {
+                            System.out.println("enter ID");
+                            int Id =sc.nextInt();
+                            Connection con = DriverManager.getConnection(
+                                    "jdbc:mysql://localhost:3306/sapir", "root", "aq123eds");
+                            Statement stmt = con.createStatement();
+                            ResultSet rs = stmt.executeQuery("select Grade_avg from view_avg where id=="+Id+" ");
+                            while (rs.next())
+                                System.out.println("the avg of the student is=" + rs.getDouble(1));
+
+                            con.close();
+                        }
+                        catch (Exception e) {
+                            System.out.println(e);
+                        }
+                        break;
+                        default :
+                        // something if anything not match
+                        System.out.println(" enter input again");
+                }
+                x = sc.nextInt();
+            }
+        }
     }
-}
